@@ -58,8 +58,10 @@ export default {
         handleToTheme(id){
             this.type='daily';
             this.themeId=id;
+            // 清空中间栏的数据
             this.list=[];
             $.ajax.get('theme/'+id).then(res=>{
+                // 过滤掉类型为1的文章，该类型下的文章为空
                 this.list=res.stories.filter(item=>item.type!==1)
             });
         },
@@ -105,10 +107,11 @@ export default {
         this.getRecommendList();
         // this.getHotList();
         const $list=this.$refs.list;
-        // 监昕中栏的滚动事件
+        // 监昕中栏的滚动事件，也可以用v-on:scroll事件
         $list.addEventListener('scroll',()=>{
             // 在“主题日报 || 热门消息”或正在加载推荐列表时停止操作
             if(this.type==='daily' || this.type==='hot' || this.isLoading) return;
+            // 己经滚动的距离加页面的高度等于整个内容区域高度时，视为接触底部
             if($list.scrollTop+document.body.clientHeight>=$list.scrollHeight){
                 this.dailyTime-=86400000;
                 this.getRecommendList();
